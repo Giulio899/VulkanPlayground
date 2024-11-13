@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio user specific files
+.vs/
+.vsconfig
+
+# Rider user specific files
+.idea/
+
+# Folders
+VulkanCourseApp/x64/*
