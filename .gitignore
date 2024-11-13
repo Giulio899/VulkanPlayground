@@ -39,4 +39,6 @@
 .idea/
 
 # Folders
-VulkanCourseApp/x64/Debug/*
+VulkanCourseApp/x64/
+VulkanCourseApp/.idea/
+VulkanCourseApp/.vs/
