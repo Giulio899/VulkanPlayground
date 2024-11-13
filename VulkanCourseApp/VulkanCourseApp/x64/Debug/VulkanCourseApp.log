@@ -1,6 +1,0 @@
-﻿  VulkanRenderer.cpp
-  main.cpp
-  Generazione del codice in corso...
-  LINK : C:\Udemy\Vulkan\VulkanPlayground\VulkanCourseApp\x64\Debug\VulkanCourseApp.exe non trovato o non compilato dall'ultimo collegamento incrementale; verrà eseguito il collegamento completo
-LINK : warning LNK4098: la libreria predefinita 'MSVCRT' è in conflitto con l'utilizzo di altre librerie; usare /NODEFAULTLIB:libreria
-  VulkanCourseApp.vcxproj -> C:\Udemy\Vulkan\VulkanPlayground\VulkanCourseApp\x64\Debug\VulkanCourseApp.exe
