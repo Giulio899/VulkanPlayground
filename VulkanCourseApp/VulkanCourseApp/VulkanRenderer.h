@@ -8,6 +8,7 @@
 #include <iostream>
 #include <set>
 #include <algorithm>
+#include <array>
 
 #include "Utilities.h"
 
@@ -35,7 +36,18 @@ private:
 	VkQueue presentationQueue;
 	VkSurfaceKHR surface;
 	VkSwapchainKHR swapChain;
+	
 	std::vector<SwapChainImage> swapChainImages;
+	std::vector<VkFramebuffer> swapChainFrameBuffers;
+	std::vector<VkCommandBuffer> commandBuffers;
+
+	//-Pipeline
+	VkPipeline graphicsPipeline;
+	VkPipelineLayout pipelineLayout;
+	VkRenderPass renderPass;
+
+	//-Pools
+	VkCommandPool graphicsCommandPool;
 
 	//-Utils
 	VkFormat swapChainImageFormat;
@@ -61,7 +73,14 @@ private:
 	void createDebugMessenger();
 	void createSurface();
 	void createSwapChain();
+	void createRenderPass();
 	void createGraphicsPipeline();
+	void createFrameBuffers();
+	void createCommandPool();
+	void createCommandBuffers();
+
+	//-Record Functions
+	void recordCommands();
 
 	//-Get Functions
 	void getPhysicalDevice();
