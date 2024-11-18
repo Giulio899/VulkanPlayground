@@ -18,12 +18,15 @@ public:
 	VulkanRenderer();
 
 	int init(GLFWwindow* newWindow);
+	void draw();
 	void cleanup();
 
 	~VulkanRenderer();
 
 private:
 	GLFWwindow* window;
+
+	int currentFrame = 0;
 
 	//Vulkan Components
 	//-Core
@@ -53,15 +56,21 @@ private:
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
 
+	//-Syncronization
+	std::vector<VkSemaphore> imageAvailable;
+	std::vector<VkSemaphore> renderFinished;
+	std::vector<VkFence> drawFences;
+
 	//-Validation layer
 	const std::vector<const char*> validationLayers = {
 		"VK_LAYER_KHRONOS_validation"
 	};
 	//This macro help to activate validations layer only in debug mode
+	//Se attivo il validation layer ho MEMORY LEAK -> TODO: da capire
 	#ifdef NDEBUG
 		const bool enableValidationLayers = false;
 	#else
-		const bool enableValidationLayers = true;
+		const bool enableValidationLayers = false;
 	#endif
 	VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -78,6 +87,7 @@ private:
 	void createFrameBuffers();
 	void createCommandPool();
 	void createCommandBuffers();
+	void createSynchronization();
 
 	//-Record Functions
 	void recordCommands();
