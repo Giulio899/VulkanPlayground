@@ -3,6 +3,9 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <stdexcept>
 #include <vector>
 #include <iostream>
@@ -19,6 +22,9 @@ public:
 	VulkanRenderer();
 
 	int init(GLFWwindow* newWindow);
+
+	void updateModel(int modelId, glm::mat4 newModel);
+	
 	void draw();
 	void cleanup();
 
@@ -31,6 +37,12 @@ private:
 
 	//Scene Objects
 	std::vector<Mesh> meshList;
+
+	//Scene settings
+	struct UboViewProjection {
+		glm::mat4 projection;
+		glm::mat4 view;
+	} uboViewProjection;
 
 	//Vulkan Components
 	//-Core
@@ -47,6 +59,28 @@ private:
 	std::vector<SwapChainImage> swapChainImages;
 	std::vector<VkFramebuffer> swapChainFrameBuffers;
 	std::vector<VkCommandBuffer> commandBuffers;
+
+	VkImage depthBufferImage;
+	VkDeviceMemory depthBufferImageMemory;
+	VkImageView depthBufferImageView;
+
+	//-Descriptors
+	VkDescriptorSetLayout descriptorSetLayout;
+
+	VkPushConstantRange pushConstantRange;
+
+	VkDescriptorPool descriptorPool;
+	std::vector<VkDescriptorSet> descriptorSets;
+
+	std::vector<VkBuffer> vpUniformBuffer;
+	std::vector<VkDeviceMemory> vpUniformBufferMemory;
+
+	std::vector<VkBuffer> modelDynamicUniformBuffer;
+	std::vector<VkDeviceMemory> modelDynamicUniformBufferMemory;
+	
+	// VkDeviceSize minUniformBufferOffset;
+	// size_t modelUniformAllignment;
+	// Model* modelTransferSpace;
 
 	//-Pipeline
 	VkPipeline graphicsPipeline;
@@ -74,7 +108,7 @@ private:
 	#ifdef NDEBUG
 		const bool enableValidationLayers = false;
 	#else
-		const bool enableValidationLayers = false;
+		const bool enableValidationLayers = true;
 	#endif
 	VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -87,20 +121,32 @@ private:
 	void createSurface();
 	void createSwapChain();
 	void createRenderPass();
+	void createDescriptorSetLayout();
+	void createPushConstantRange();
 	void createGraphicsPipeline();
+	void createDepthBufferImage();
 	void createFrameBuffers();
 	void createCommandPool();
 	void createCommandBuffers();
 	void createSynchronization();
 
+	void createUniformBuffers();
+	void createDescriptorPool();
+	void createDescriptorSets();
+
+	void updateUniformBuffers(uint32_t imageIndex);
+
 	//-Record Functions
-	void recordCommands();
+	void recordCommands(uint32_t currentImage);
 
 	//-Get Functions
 	void getPhysicalDevice();
 	//Return the required list of extensions based on whether validation layers are enabled or not
 	std::vector<const char*> getRequiredExtensions();
 
+	//--Allocate Functions
+	void allocateDynamicBufferTransferSpace();
+	
 	//-Support Functions
 	void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	
@@ -118,8 +164,12 @@ private:
 	VkSurfaceFormatKHR chooseBestSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &formats);
 	VkPresentModeKHR chooseBestPresentationMode(const std::vector<VkPresentModeKHR> &presentationModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &surfaceCapabilities);
+	VkFormat chooseSupportedFormat(const std::vector<VkFormat> &formats, VkImageTiling tiling, VkFormatFeatureFlags featureFlags);
 
 	//--Create functions
+	VkImage createImage(uint32_t width, uint32_t height, VkFormat format,
+		VkImageTiling tiling, VkImageUsageFlags useFlags, VkMemoryPropertyFlags propFlags,
+		VkDeviceMemory* imageMemory);
 	VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 	VkShaderModule createShaderModule(const std::vector<char> &code);
 	
